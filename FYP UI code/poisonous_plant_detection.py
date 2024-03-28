@@ -11,7 +11,7 @@ import tensorflow as tf
 from PIL import Image
 
 # Load the saved model
-loaded_model = tf.keras.models.load_model('C:/Users/user/Desktop/FYP Source code/denoised_images_model.h5')
+loaded_model = tf.keras.models.load_model('denoised_images_model.h5')
 
 # Function to preprocess the image
 def preprocess_image(img):
