@@ -4,9 +4,9 @@ import tensorflow as tf
 import streamlit as st
 
 # Load your Keras models
-model1 = tf.keras.models.load_model("Models/20epoch_backgroundremoved_model.h5")
-model2 = tf.keras.models.load_model("Models/20epoch_denoised_model_with_more_layers.h5")
-model3 = tf.keras.models.load_model("Models/20epoch_equalized_model.h5")
+model1 = tf.keras.models.load_model("Final_models/20epoch_backgroundremoved_model.h5")
+model2 = tf.keras.models.load_model("Final_models/20epoch_denoised_model_with_more_layers.h5")
+model3 = tf.keras.models.load_model("Final_models/20epoch_equalized_model.h5")
 
 # Define the list of classes
 li = ['Abrus precatorius', 'Caladium Bicolor', 'Curcas', 'Datura Stramonium', 
@@ -54,16 +54,17 @@ if uploaded_file is not None:
     # Preprocess the image
     preprocessed_image = preprocess_image(original_image)
     
-    # Resize the original image to match the dimensions of the preprocessed image
-    original_image_resized = original_image.resize(preprocessed_image.shape[1::-1], Image.ANTIALIAS)
+    # Resize the preprocessed image to match the width of the original image
+    width = original_image.width
+    preprocessed_image_resized = Image.fromarray((preprocessed_image[0] * 255).astype(np.uint8)).resize((width, width), Image.ANTIALIAS)
     
+    # Display the original and preprocessed images side by side
+    col1, col2 = st.columns(2)
+    col1.image(original_image, caption='Original Image', use_column_width=True)
+    col2.image(preprocessed_image_resized, caption='Preprocessed Image', use_column_width=True)
+
     # Predict the class of the single image
     predicted_class = predict_single_image(original_image, [model1, model2, model3], li)
-
-    # Display the images and prediction side by side
-    col1, col2 = st.columns(2)
-    col1.image(original_image_resized, caption='Original Image', use_column_width=True)
-    col2.image(preprocessed_image[0], caption='Preprocessed Image', use_column_width=True)
 
     # Show the predicted class
     if predicted_class in ['Abrus precatorius', 'Caladium Bicolor', 'Curcas', 'Datura Stramonium', 'Gloriosa Superba', 'Jatropha Multifida']:
